@@ -101,16 +101,17 @@ class ChunkDetection():
 
     def __getDfChunks(self, chunks):
         columns = ['start_time', 'type', 'ttfb',
-                   'download_time', 'get_size', 'chunk_size']
+                   'download_time', 'end_time', 'get_size', 'chunk_size']
         df_chunk = pd.DataFrame(columns=columns)
         for c in chunks:
             start_time = c.start_time
             type = c.type
-            ttfb = c.ttfb - c.start_time
-            download_time = c.download_time - c.start_time
+            ttfb = c.ttfb
+            end_time = c.download_time
+            download_time = end_time - ttfb
             get_size = c.get_size
             chunk_size = c.chunk_size
-            s = pd.Series([start_time, type, ttfb, download_time,
+            s = pd.Series([start_time, type, ttfb, download_time, end_time,
                           get_size, chunk_size], index=columns)
             df_chunk.loc[len(df_chunk)] = s
 
@@ -139,17 +140,17 @@ class ChunkDetection():
                 download_time_a = -1
             else:
                 total_number_of_chunks_v = self.__df_chunks[(self.__df_chunks['type'] == 'v') & (
-                    self.__df_chunks['start_time'] > t-period) & (self.__df_chunks['start_time'] < t)].shape[0]
+                    self.__df_chunks['end_time'] > t-period) & (self.__df_chunks['start_time'] < t)].shape[0]
                 avg_chunk_size_v = self.__df_chunks[(self.__df_chunks['type'] == 'v') & (
-                    self.__df_chunks['start_time'] > t-period) & (self.__df_chunks['start_time'] < t)]['chunk_size'].mean()
+                    self.__df_chunks['end_time'] > t-period) & (self.__df_chunks['start_time'] < t)]['chunk_size'].mean()
                 download_time_v = self.__df_chunks[(self.__df_chunks['type'] == 'v') & (
-                    self.__df_chunks['start_time'] > t-period) & (self.__df_chunks['start_time'] < t)]['download_time'].sum()
+                    self.__df_chunks['end_time'] > t-period) & (self.__df_chunks['start_time'] < t)]['download_time'].sum()
                 total_number_of_chunks_a = self.__df_chunks[(self.__df_chunks['type'] == 'a') & (
-                    self.__df_chunks['start_time'] > t-period) & (self.__df_chunks['start_time'] < t)].shape[0]
+                    self.__df_chunks['end_time'] > t-period) & (self.__df_chunks['start_time'] < t)].shape[0]
                 avg_chunk_size_a = self.__df_chunks[(self.__df_chunks['type'] == 'a') & (
-                    self.__df_chunks['start_time'] > t-period) & (self.__df_chunks['start_time'] < t)]['chunk_size'].mean()
+                    self.__df_chunks['end_time'] > t-period) & (self.__df_chunks['start_time'] < t)]['chunk_size'].mean()
                 download_time_a = self.__df_chunks[(self.__df_chunks['type'] == 'a') & (
-                    self.__df_chunks['start_time'] > t-period) & (self.__df_chunks['start_time'] < t)]['download_time'].sum()
+                    self.__df_chunks['end_time'] > t-period) & (self.__df_chunks['start_time'] < t)]['download_time'].sum()
             s += [total_number_of_chunks_v, avg_chunk_size_v, download_time_v,
                   total_number_of_chunks_a, avg_chunk_size_a, download_time_a]
         return s
