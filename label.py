@@ -10,12 +10,22 @@ Num = [0 for _ in range(0, 4)]
 Resolution_list = ['q144p', 'q240p', 'q360p', 'q480p', 'q720p', 'q1080p', 'q1440p', 'q2160p']
 status_list = ['Stall', 'Steady State', 'Buffer Decay', 'Buffer Increase']
 
+
+def smooth_status(status_origin):
+    status_smooth = []
+    state = status_origin[0]
+    for i in range(1, len(status)):
+        if status_origin[i] == state:
+            status_smooth.append(state)
+    return status_smooth
+
+
 for dataset in dataset_list:
     dataset_folder = 'data/' + dataset + '/'
     files = glob.glob(dataset_folder + '*.csv')
 
     for file in files:
-        file = "data/A/baseline_Jan17_exp_28_merged.csv"
+        # file = "data/A/baseline_Jan17_exp_28_merged.csv"
         fileid = file.split('.')[0]
         print(fileid)
         df = pd.read_csv(file)
@@ -31,7 +41,6 @@ for dataset in dataset_list:
         status = []
         BuffWarnings = []
         Resolutions = []
-        a, b, c = [], [], []
         for index, row in df.iterrows():
             hat_b[round(row['RelativeTime'] * 10) / 10] = df[(df['RelativeTime'] >= row['RelativeTime'] - T_smooth - delta) & (
                         df['RelativeTime'] <= row['RelativeTime'] + T_smooth + delta)].BufferHealth.median()
@@ -56,10 +65,6 @@ for dataset in dataset_list:
             mt = (hat_b[t_slope_1] - hat_b[t_slope_2]) / (t_slope_1 - t_slope_2)
             m.append(mt)
 
-            a.append(hat_b[t_slope_1])
-            b.append(hat_b[t_slope_2])
-            c.append((t_slope_1 - t_slope_2))
-
             b_t = row['BufferHealth']
             if b_t < BuffWarningThresh:
                 BuffWarnings.append(1)
@@ -77,13 +82,13 @@ for dataset in dataset_list:
             Sum = Sum + 1
             Num[state] = Num[state] + 1
             status.append(state)
+        # status = smooth_status(status)
         df['status'] = status
         df['BuffWarning'] = BuffWarnings
         df['Resolution'] = Resolutions
 
         df.to_csv(fileid + '_tag.csv', index=None, header=True)
-        break
-    break
-
+        # break
+    # break
 
 print(Sum, Num)
