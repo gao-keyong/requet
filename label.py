@@ -21,7 +21,7 @@ def smooth_status(status_origin):
 
 
 for dataset in dataset_list:
-    dataset_folder = 'data/' + dataset + '/'
+    dataset_folder = 'reqdata/' + dataset + '/'
     files = glob.glob(dataset_folder + '*.csv')
 
     for file in files:

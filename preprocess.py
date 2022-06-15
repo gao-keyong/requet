@@ -79,6 +79,6 @@ for dataset_to_use in dataset_list:
         # df = df[df['CollectData'] != 1]  # !why
         # df = df[df['UnlabelledQuality'] != 1]
         print("Concatenating (", i, "/", len(files), "): ", file)
-        df.to_csv('data/' + dataset_to_use + '/' + file.split('/')[-1].split('.')[0] + '.csv', index=False)
+        df.to_csv('reqdata/' + dataset_to_use + '/' + file.split('/')[-1].split('.')[0] + '.csv', index=False)
         # df.to_csv('data/' + dataset_to_use + '/' + file.split('.')[0] + '_full.csv', index=None, header=True)
         i = i + 1
