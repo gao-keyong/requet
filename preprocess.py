@@ -2,31 +2,7 @@ import glob
 
 import pandas as pd
 
-dataset_to_use = 'D'
-
-datasets_folder = "RequetDataSet-master"
-dataset_folder = datasets_folder + '/' + dataset_to_use + '/MERGED_FILES/'
-files = glob.glob(dataset_folder + 'baseline_*_merged.txt')
-
-print("Files found in folder : ", dataset_folder, ":", files)
-
-df = pd.DataFrame()
-
-i = 1
-
-for file in files:
-    outfilename = file + ".csv"
-    fin = open(file, "rt")
-    fout = open(outfilename, "wt")
-    # From https://pythonexamples.org/python-replace-string-in-file/
-    for line in fin:
-        fout.write(line.replace('[', '').replace(']', ''))
-    fin.close()
-    fout.close()
-    df = pd.concat([df, pd.read_csv(outfilename, header=None)],
-                   ignore_index=True)
-    print("Concatenating (", i, "/", len(files), "): ", file)
-    i = i + 1
+dataset_list = ['A', 'B1', 'B2', 'C', 'D']
 
 colnames = ['RelativeTime', 'PacketsSent', 'PacketsReceived', 'BytesSent', 'BytesReceived']
 
@@ -81,9 +57,28 @@ if len(colnames) != NUM_COLS:
     raise Exception("Expected number of columns ", NUM_COLS, ", constructed ",
                     len(colnames))
 
-df.columns = colnames
-df = df[df['CollectData'] != 1]  # !why
-df = df[df['UnlabelledQuality'] != 1]
 
-fullFilename = 'data/df.' + dataset_to_use + '_full.csv'
-df.to_csv(fullFilename, index=None, header=True)
+for dataset_to_use in dataset_list:
+    datasets_folder = "RequetDataSet-master"
+    dataset_folder = datasets_folder + '/' + dataset_to_use + '/MERGED_FILES/'
+    files = glob.glob(dataset_folder + 'baseline_*_merged.txt')
+
+    print("Files found in folder : ", dataset_folder, ":", files)
+    i = 1
+    for file in files:
+        outfilename = file + ".csv"
+        fin = open(file, "rt")
+        fout = open(outfilename, "wt")
+        # From https://pythonexamples.org/python-replace-string-in-file/
+        for line in fin:
+            fout.write(line.replace('[', '').replace(']', ''))
+        fin.close()
+        fout.close()
+        df = pd.read_csv(outfilename, header=None)
+        df.columns = colnames
+        # df = df[df['CollectData'] != 1]  # !why
+        # df = df[df['UnlabelledQuality'] != 1]
+        print("Concatenating (", i, "/", len(files), "): ", file)
+        df.to_csv('data/' + dataset_to_use + '/' + file.split('/')[-1].split('.')[0] + '.csv', index=False)
+        # df.to_csv('data/' + dataset_to_use + '/' + file.split('.')[0] + '_full.csv', index=None, header=True)
+        i = i + 1
