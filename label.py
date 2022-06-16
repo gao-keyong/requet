@@ -7,7 +7,8 @@ import pandas as pd
 from warnings import simplefilter
 simplefilter(action='ignore', category=FutureWarning)
 
-dataset_list = ['A', 'B1', 'B2', 'C', 'D']
+# dataset_list = ['A', 'B1', 'B2', 'C', 'D']
+dataset_list = ['']
 
 Sum = 0
 Num = [0 for _ in range(0, 4)]
@@ -73,7 +74,7 @@ def smooth_status(status_origin, m_t):
     return status_smooth
 
 for dataset in dataset_list:
-    dataset_folder = 'reqdata/' + dataset + '/'
+    dataset_folder = 'test_data/' + dataset + '/'
     files = glob.glob(dataset_folder + '*_tag.csv')
     for file in files:
         # print(file)
@@ -81,7 +82,7 @@ for dataset in dataset_list:
     
 
 for dataset in dataset_list:
-    dataset_folder = 'reqdata/' + dataset + '/'
+    dataset_folder = 'test_data/' + dataset + '/'
     files = glob.glob(dataset_folder + '*.csv')
 
     for file in files:
