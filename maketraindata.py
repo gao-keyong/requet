@@ -34,7 +34,7 @@ for i in range(len(files)):
 		feature.append(file_name + "-" + str(file.iloc[i,0]))
 		feature.extend(file.iloc[i,1:])
 		ans.append(feature)
-out_file=open('testdata/test_data.csv','w',newline='')# output   be careful of filename
+out_file=open('test_data/test_data.csv','w',newline='')# output   be careful of filename
 writer=csv.writer(out_file)
 keys=['label'+str(i) for i in range(120)]
 keys.extend(['filename_time', 'status','BuffWarning','Resolution'])
